@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hz.boot01.dao.ProviderDao">
+
+    <delete id="deleteProviderById">
+        delete from  smbms_provider where id=#{id}
+    </delete>
+
+
+
+    <update id="updateProvider">
+        update smbms_provider set proCode=#{proCode},
+        proName=#{proName},proDesc=#{proDesc},
+        addtime=#{addtime},
+        sex=#{sex}
+        where id=#{id}
+    </update>
+    <insert id="saveProvider">
+        insert into smbms_provider(proCode,proName,proDesc,addtime)
+        values(#{proCode},#{proName},#{proDesc},#{addtime})
+    </insert>
+
+
+
+
+   <sql id="provider_where">
+       <where>
+           <if test="proName!=null">
+               proName like concat('%',#{proName},'%')</if>
+           <if test="proDesc!=null">
+               and proDesc like concat('%',#{proDesc},'%')</if>
+       </where>
+   </sql>
+
+    <select id="findProviderList" resultType="Provider">
+        select * from smbms_provider
+       <include refid="provider_where"/>
+        order by creationDate desc
+        limit #{pyl},#{page_size}
+    </select>
+    <select id="findProviderListCount" resultType="int" >
+        select count(1) from smbms_provider
+        <include refid="provider_where"/>
+    </select>
+
+
+
+
+    <select id="findProviderById" resultType="Provider">
+        select * from smbms_provider where id=#{id}
+    </select>
+
+
+
+</mapper>
