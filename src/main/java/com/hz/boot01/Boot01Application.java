@@ -13,6 +13,7 @@ public class Boot01Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Boot01Application.class, args);
+        System.out.println("启动成功！");
     }
 
 }
