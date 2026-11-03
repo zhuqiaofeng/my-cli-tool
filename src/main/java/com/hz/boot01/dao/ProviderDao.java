@@ -2,7 +2,6 @@ package com.hz.boot01.dao;
 
 import com.hz.boot01.pojo.Provider;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 

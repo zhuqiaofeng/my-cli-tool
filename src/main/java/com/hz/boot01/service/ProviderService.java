@@ -1,7 +1,6 @@
 package com.hz.boot01.service;
 
 import com.hz.boot01.pojo.Provider;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
