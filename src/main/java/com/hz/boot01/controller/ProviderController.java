@@ -23,7 +23,6 @@ public class ProviderController {
 
     /**
      * VUE 调用 分页查询  多条件
-     * @return
      */
     @RequestMapping(value = "/findProviderList1",method = RequestMethod.GET)
     @ResponseBody
@@ -66,7 +65,6 @@ public class ProviderController {
      * 分页查询  多条件
      * @param page  当前页
      * @param limit1 每页显示条数
-     * @return
      */
     @RequestMapping(value = "/findProviderList",method = RequestMethod.GET)
     @ResponseBody
