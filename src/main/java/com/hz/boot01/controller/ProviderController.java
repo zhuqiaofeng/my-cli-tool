@@ -35,7 +35,7 @@ public class ProviderController {
         List<Provider> list = providerService.findProviderList(pageNo,pageSize,proName,proDesc);
         Integer count = providerService.findProviderListCount(proName,proDesc);
 
-        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<List<Provider>>();
+        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<>();
         jsonMassage.setCode(200);
         jsonMassage.setMsg("ok");
         jsonMassage.setCount(count);
@@ -44,21 +44,21 @@ public class ProviderController {
     }
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
-    public JsonMassage login(String username,String password){
+    public JsonMassage<Integer> login(String username,String password){
 
         System.out.println("username===="+username);
         System.out.println("password===="+password);
 
 
-        return new JsonMassage(200,"请求成功",0,1001);
+        return new JsonMassage<>(200,"请求成功",0,1001);
     }
 
 
     @RequestMapping(value = "/saveProvider",method = RequestMethod.POST)
     @ResponseBody
-    public JsonMassage saveProvider(Provider provider){
-        int i = providerService.saveProvider(provider);
-        return new JsonMassage(200,"请求成功",0,null);
+    public JsonMassage<Void> saveProvider(Provider provider){
+        providerService.saveProvider(provider);
+        return new JsonMassage<>(200,"请求成功",0,null);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ProviderController {
         List<Provider> list = providerService.findProviderList(page,limit1,proName,proDesc);
         Integer count = providerService.findProviderListCount(proName,proDesc);
 
-        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<List<Provider>>();
+        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<>();
         jsonMassage.setCode(0);
         jsonMassage.setMsg("请求成功");
         jsonMassage.setCount(count);
@@ -90,7 +90,7 @@ public class ProviderController {
     public JsonMassage<Provider> findProviderById1(@PathVariable("id") Integer id){
         Provider provider = providerService.findProviderById(id);
 
-        return new JsonMassage<Provider>(200,"请求成功",0,provider);
+        return new JsonMassage<>(200,"请求成功",0,provider);
     }
 
 
@@ -104,16 +104,16 @@ public class ProviderController {
 
     @RequestMapping(value = "/deleteProviderById",method = RequestMethod.POST)
     @ResponseBody
-    public JsonMassage deleteProviderById(Integer id){
-        int i = providerService.deleteProviderById(id);
-        return new JsonMassage(200,"请求成功",0,null);
+    public JsonMassage<Void> deleteProviderById(Integer id){
+        providerService.deleteProviderById(id);
+        return new JsonMassage<>(200,"请求成功",0,null);
     }
 
     @RequestMapping(value = "/updateProvider",method = RequestMethod.POST)
     @ResponseBody
-    public JsonMassage updateProvider(Provider provider){
-        int i = providerService.updateProvider(provider);
-        return new JsonMassage(200,"请求成功",0,null);
+    public JsonMassage<Void> updateProvider(Provider provider){
+        providerService.updateProvider(provider);
+        return new JsonMassage<>(200,"请求成功",0,null);
     }
 
 }
