@@ -2,11 +2,9 @@ package com.hz.boot01.utils;
 
 import com.alibaba.fastjson2.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
@@ -27,9 +25,9 @@ public class RedisUtil {
     @Resource(name = "redisTemplate")
     ValueOperations<Object, Object> valOpsObj;
 
-    public Object getStrJson(String key,Class a){
+    public <T> T getStrJson(String key, Class<T> clazz){
         String j = valOpsStr.get(key);
-        return  JSON.parseObject(j,a);
+        return JSON.parseObject(j, clazz);
     }
 
     //time 秒
@@ -115,30 +113,21 @@ public class RedisUtil {
 
 
     /***
-     * 加锁的方法
-     * @return
+     * 加锁的方法（Spring Boot 3 推荐写法，用 setIfAbsent 代替 deprecated 的 setNX）
+     * @param key 锁的 key
+     * @param expire 过期时间（秒）
+     * @return 是否加锁成功
      */
-    public boolean lock(String key,Long expire){
-       RedisConnection redisConnection=redisTemplate.getConnectionFactory().getConnection();
-       //设置序列化方法
-       redisTemplate.setKeySerializer(new StringRedisSerializer());
-       redisTemplate.setValueSerializer(new StringRedisSerializer());
-       if(redisConnection.setNX(key.getBytes(),new byte[]{1})){
-           redisTemplate.expire(key,expire,TimeUnit.SECONDS);
-           redisConnection.close();
-           return true;
-       }else{
-           redisConnection.close();
-           return false;
-       }
+    public boolean lock(String key, Long expire){
+        Boolean success = stringRedisTemplate.opsForValue()
+                .setIfAbsent(key, "1", expire, TimeUnit.SECONDS);
+        return Boolean.TRUE.equals(success);
     }
     /***
      * 解锁的方法
-     * @param key
+     * @param key 锁的 key
      */
     public void unLock(String key){
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.delete(key);
+        stringRedisTemplate.delete(key);
     }
 }
