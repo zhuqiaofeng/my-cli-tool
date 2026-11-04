@@ -57,7 +57,7 @@ public class UserCacheService {
         String key = USER_CACHE_PREFIX + userId;
 
         // 1. 先查 Redis
-        User user = redisUtil.getStrJson(key, User.class);
+        User user = (User) redisUtil.getStrJson(key, User.class);
         if (user != null) {
             System.out.println("【缓存命中】从 Redis 读取用户：" + userId);
             return user;

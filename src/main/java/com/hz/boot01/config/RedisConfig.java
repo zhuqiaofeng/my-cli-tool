@@ -41,10 +41,10 @@ public class RedisConfig {
      */
     @Bean
     @SuppressWarnings("unchecked")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
 
         // 创建 RedisTemplate 实例，指定 key 和 value 的泛型
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
         // ========== 1. 设置 key 的序列化方式 ==========
