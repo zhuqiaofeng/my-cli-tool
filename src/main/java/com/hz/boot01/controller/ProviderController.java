@@ -17,12 +17,9 @@ public class ProviderController {
     @Autowired
     private ProviderService providerService;
 
-    @Autowired
-    private RedisUtil redisUtil;
-
 
     /**
-     * VUE 调用 分页查询  多条件
+     * VUE 调用 分页查询  多条件（参数：pageNo/pageSize，code=200）
      */
     @RequestMapping(value = "/findProviderList1",method = RequestMethod.GET)
     @ResponseBody
@@ -32,15 +29,38 @@ public class ProviderController {
             String proName,
             String proDesc
     ){
-        List<Provider> list = providerService.findProviderList(pageNo,pageSize,proName,proDesc);
-        Integer count = providerService.findProviderListCount(proName,proDesc);
+        return buildPageResult(pageNo, pageSize, proName, proDesc, 200, "ok");
+    }
 
-        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<>();
-        jsonMassage.setCode(200);
-        jsonMassage.setMsg("ok");
-        jsonMassage.setCount(count);
-        jsonMassage.setData(list);
-        return jsonMassage;
+    /**
+     * Layui 调用 分页查询  多条件（参数：page/limit，code=0）
+     */
+    @RequestMapping(value = "/findProviderList",method = RequestMethod.GET)
+    @ResponseBody
+    public JsonMassage<List<Provider>> findProviderList(
+            @RequestParam(value = "page",defaultValue = "1") Integer page,
+            @RequestParam(value = "limit1",defaultValue = "10") Integer limit1,
+             String proName,
+             String proDesc
+            ){
+        return buildPageResult(page, limit1, proName, proDesc, 0, "请求成功");
+    }
+
+    /**
+     * 抽取公共的分页查询结果构造逻辑
+     */
+    private JsonMassage<List<Provider>> buildPageResult(Integer page, Integer pageSize,
+                                                        String proName, String proDesc,
+                                                        Integer code, String msg) {
+        List<Provider> list = providerService.findProviderList(page, pageSize, proName, proDesc);
+        Integer count = providerService.findProviderListCount(proName, proDesc);
+
+        JsonMassage<List<Provider>> result = new JsonMassage<>();
+        result.setCode(code);
+        result.setMsg(msg);
+        result.setCount(count);
+        result.setData(list);
+        return result;
     }
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
@@ -59,30 +79,6 @@ public class ProviderController {
     public JsonMassage<Void> saveProvider(Provider provider){
         providerService.saveProvider(provider);
         return new JsonMassage<>(200,"请求成功",0,null);
-    }
-
-    /**
-     * 分页查询  多条件
-     * @param page  当前页
-     * @param limit1 每页显示条数
-     */
-    @RequestMapping(value = "/findProviderList",method = RequestMethod.GET)
-    @ResponseBody
-    public JsonMassage<List<Provider>> findProviderList(
-            @RequestParam(value = "page",defaultValue = "1") Integer page,
-            @RequestParam(value = "limit1",defaultValue = "10") Integer limit1,
-             String proName,
-             String proDesc
-            ){
-        List<Provider> list = providerService.findProviderList(page,limit1,proName,proDesc);
-        Integer count = providerService.findProviderListCount(proName,proDesc);
-
-        JsonMassage<List<Provider>> jsonMassage = new JsonMassage<>();
-        jsonMassage.setCode(0);
-        jsonMassage.setMsg("请求成功");
-        jsonMassage.setCount(count);
-        jsonMassage.setData(list);
-        return jsonMassage;
     }
 
     @RequestMapping("/findProviderById1/{id}")
