@@ -10,13 +10,28 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     encoding: UTF-8
+  # ==================== ShardingSphere 分库分表配置（5.5.1已适配snakeyaml2.x） ====================
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
-    url: jdbc:mysql://127.0.0.1:3306/smbms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:sharding.yml
   resources:
     static-locations: classpath:/templates,classpath:/static/
+  # RabbitMQ 配置（默认就是 localhost:5672 guest/guest，不用写也能连）
+  # rabbitmq:
+  #   host: 127.0.0.1
+  #   port: 5672
+  #   username: guest
+  #   password: guest
+  #   virtual-host: /
+  # MongoDB 配置
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: test
+    # Elasticsearch 配置
+    elasticsearch:
+      uris: http://127.0.0.1:9200
 #设置端口号
 server:
   port: 80
@@ -26,6 +41,12 @@ mybatis:
   mapper-locations: classpath:mappers/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印SQL语句
+
+# 日志配置
+logging:
+  level:
+    # 打印 MongoDB 执行的查询语句
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 
 
 

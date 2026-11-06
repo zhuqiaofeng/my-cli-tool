@@ -1,0 +1,47 @@
+# ============================================================
+# ShardingSphere 分库分表配置文件
+# ============================================================
+# 【这个文件的作用】
+# ShardingSphere 启动的时候会读这个配置，知道：
+# 1. 连接哪个数据库（数据源）
+# 2. 哪个逻辑表需要分表
+# 3. 按什么字段分、用什么算法分
+# 4. 逻辑表对应哪些实际的物理表
+# 5. 要不要打印实际执行的 SQL（方便调试）
+# ============================================================
+
+# 第一步：配置真实的数据源（我们这里只有一个 MySQL 库，就是 smbms）
+dataSources:
+  ds0:  # 数据源名字，随便起，后面配置分表规则的时候用这个名字引用
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource  # 用 Hikari 连接池
+    driverClassName: com.mysql.cj.jdbc.Driver  # MySQL 驱动
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/smbms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+
+# 第二步：配置分片规则
+rules:
+  - !SHARDING  # 这一行表示下面是分表规则配置
+    tables:
+      # 配置逻辑表和实际表的映射关系
+      user:  # 逻辑表名：你代码里写的表名（就是我们SQL里的user）
+        # 实际节点：ds0是上面配置的数据源，user_${0..1} 表示实际有两张表 user_0 和 user_1
+        actualDataNodes: ds0.user_${0..1}
+
+        # 配置分表策略（按表维度分，我们这里不分库，只分表）
+        tableStrategy:
+          standard:
+            shardingColumn: id  # 分片键：用 id 字段的值来决定路由
+            shardingAlgorithmName: user-inline  # 用我们下面定义的叫 user-inline 的算法
+
+    # 第三步：定义分片算法
+    shardingAlgorithms:
+      user-inline:  # 算法名字，和上面引用的名字对应
+        type: INLINE  # INLINE 就是用 Groovy 表达式来算，最简单的分表算法
+        props:
+          # 核心路由公式：id 对 2 取模，结果是 0 就去 user_0，结果是 1 就去 user_1
+          algorithm-expression: user_${id % 2}
+
+# 第四步：全局配置
+props:
+  sql-show: true  # 打开 SQL 打印，控制台会显示 ShardingSphere 改写后的真实 SQL，调试的时候非常有用
